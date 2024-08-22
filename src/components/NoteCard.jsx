@@ -1,4 +1,5 @@
-import Trash from "../icons/Trash.jsx"
+import Trash from '../icons/Trash.jsx';
+import {setNewOffset} from '../utils.js';
 
 useEffect(() => {
   autoGrow(textAreaRef);
@@ -35,11 +36,8 @@ const mouseMove = (e) =>{
   };
   mouseStartPos.x = e.clientX;
   mouseStartPos.y = e.clientY;
-
-  setPosition({
-    x: cardRef.current.offsetLeft - mouseMoveDir.x,
-    y: cardRef.current.offsetLeft - mouseMoveDir.y,
-  });
+  const newPosition = setNewOffset(cardRef.current,mouseMoveDir);
+  setPosition(newPosition);
 };
 
 const textAreaRef = useRef(null);
