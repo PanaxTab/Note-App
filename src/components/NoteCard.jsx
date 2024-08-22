@@ -17,6 +17,31 @@ function autoGrow(textAreaRef){
   current.style.height = scrollHeight + "px";
 }
 
+const mouseUp = () => {
+  document.removeEventListener("mousemove",mouseMove);
+  document.removeEventListener("mouseup", mouseUp)
+};
+
+const mouseDown = (e) =>{
+  mouseStartPos.x = e.clientX;
+  mouseStartPos.y = e.clientY;
+  document.addEventListener("mousemove",mouseMove);
+}
+
+const mouseMove = (e) =>{
+  let mouseMoveDir = {
+  x: mouseStartPos.x - e.clientX, 
+  y: mouseStartPos.y - e.clientY,
+  };
+  mouseStartPos.x = e.clientX;
+  mouseStartPos.y = e.clientY;
+
+  setPosition({
+    x: cardRef.current.offsetLeft - mouseMoveDir.x,
+    y: cardRef.current.offsetLeft - mouseMoveDir.y,
+  });
+};
+
 const textAreaRef = useRef(null);
 const NoteCard = ({note}) => {
   let position = JSON.parse(note.position);
@@ -29,7 +54,9 @@ const NoteCard = ({note}) => {
         backgroundColor:colors.colorHeader,
         left: `${position.x}px`,
         top: `${position.y}px`,
-      }}>
+      }}
+      onMouseDown = {mouseDown}
+      >
         <Trash />
     </div>
     <div className="card-body">
