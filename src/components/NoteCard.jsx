@@ -17,25 +17,33 @@ const NoteCard = ({ note }) => {
   
   
   
-  const mouseUp = () => {
+  const mouseUp = async () => {
     document.removeEventListener("mousemove",mouseMove);
     document.removeEventListener("mouseup", mouseUp)
+
+    const newPosition = setNewOffset(cardRef.current);
+    setPosition(newPosition);
   };
   
   const mouseDown = (e) =>{
-    setZIndex(cardRef.current);
-    mouseStartPos.x = e.clientX;
-    mouseStartPos.y = e.clientY;
-    document.addEventListener("mousemove",mouseMove);
-  }
+    if (e.target.className ==="card-header"){
+      setZIndex(cardRef.current);
+      mouseStartPos.x = e.clientX;
+      mouseStartPos.y = e.clientY;
+      document.addEventListener("mousemove",mouseMove);
+      document.addEventListener("mouseup", mouseUp)
+    };
+  };
   
   const mouseMove = (e) =>{
-    let mouseMoveDir = {
-    x: mouseStartPos.x - e.clientX, 
-    y: mouseStartPos.y - e.clientY,
+    const mouseMoveDir = {
+      x: mouseStartPos.x - e.clientX, 
+      y: mouseStartPos.y - e.clientY,
     };
+    
     mouseStartPos.x = e.clientX;
     mouseStartPos.y = e.clientY;
+    
     const newPosition = setNewOffset(cardRef.current,mouseMoveDir);
     setPosition(newPosition);
   };
@@ -44,29 +52,27 @@ const NoteCard = ({ note }) => {
 
   
   return (
-  <div className="card" style={{backgroundColor:colors.colorBody,}}>
-    <div className="card-header" style={{
-        backgroundColor:colors.colorHeader,
-        left: `${position.x}px`,
-        top: `${position.y}px`,
+    <div ref={cardRef} className="card" style={{ backgroundColor: colors.colorBody, left:`${position.x}px` , top:`${position.y}px`}}>
+      <div onMouseDown={mouseDown} className="card-header" style={{
+        
+        backgroundColor: colors.colorHeader,
       }}
-      onMouseDown = {mouseDown}
       >
         <Trash />
-    </div>
-    <div className="card-body">
-      <textarea 
-        style={{color:colors.colorText}} 
-        defaultValue={body} 
-        ref={textAreaRef}
-        onInput={()=>{
-          autoGrow(textAreaRef);
-        }}
-        onFocus={()=>{setZIndex(cardRef.current);}}
+      </div>
+      <div className="card-body">
+        <textarea
+          style={{ color: colors.colorText }}
+          defaultValue={body}
+          ref={textAreaRef}
+          onInput={() => {
+            autoGrow(textAreaRef);
+          }}
+          onFocus={() => { setZIndex(cardRef.current); }}
         >
-      </textarea>
+        </textarea>
+      </div>
     </div>
-  </div>
   );
 };
 
