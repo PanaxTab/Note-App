@@ -11,5 +11,14 @@ export const setNewOffset = (card,mouseMoveDir = {x:0,y:0}) => {
 export function autoGrow(textAreaRef){
   const {current} = textAreaRef;
   current.style.height = "auto";
-  current.style.height = scrollHeight + "px";
+  current.style.height = textAreaRef.current.scrollHeight + "px";
 }
+
+export const setZIndex = (selectedCard) => {
+  selectedCard.style.zIndex = 999;
+  Array.from(document.getElementByClassName("card")).array.forEach(card => {
+    if(card !== selectedCard) {
+      card.style.zIndex = selectedCard.style.zIndex - 1;
+    }
+  });
+};
