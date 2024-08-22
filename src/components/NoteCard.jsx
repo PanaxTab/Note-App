@@ -1,5 +1,5 @@
 import Trash from '../icons/Trash.jsx';
-import {setNewOffset} from '../utils.js';
+import {setNewOffset, autoGrow} from '../utils.js';
 
 useEffect(() => {
   autoGrow(textAreaRef);
@@ -11,12 +11,6 @@ const [position,setPosition] = useState(JSON.parase(note.position));
 //Starting position of where the mouse clicked and then moved
 let mouseStartPos = {x:0,y:0};
 const cardRef = useRef(null);
-
-function autoGrow(textAreaRef){
-  const {current} = textAreaRef;
-  current.style.height = "auto";
-  current.style.height = scrollHeight + "px";
-}
 
 const mouseUp = () => {
   document.removeEventListener("mousemove",mouseMove);
