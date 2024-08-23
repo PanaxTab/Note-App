@@ -16,9 +16,19 @@ export function autoGrow(textAreaRef){
 
 export const setZIndex = (selectedCard) => {
   selectedCard.style.zIndex = 999;
-  Array.from(document.getElementByClassName("card")).array.forEach(card => {
+  
+  Array.from(document.getElementsByClassName("card")).forEach((card) => {
     if(card !== selectedCard) {
       card.style.zIndex = selectedCard.style.zIndex - 1;
     }
   });
 };
+
+export function bodyParser(value) {
+  try{
+    JSON.parse(value);
+    return JSON.parse(value);
+  } catch(error) {
+    return value;
+  }
+}
