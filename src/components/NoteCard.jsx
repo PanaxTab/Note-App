@@ -1,6 +1,7 @@
 import Trash from '../icons/Trash.jsx';
 import {setNewOffset, autoGrow, setZIndex} from '../utils.js';
 import { useEffect,useRef,useState } from 'react';
+import { db } from '../appwrite/databases.js';
 
 const NoteCard = ({ note }) => {
   let mouseStartPos = {x:0,y:0};
@@ -12,7 +13,9 @@ const NoteCard = ({ note }) => {
   const body = JSON.parse(note.body);
   
   const textAreaRef = useRef(null);
-  
+  const keyUpTimer = useRef(null);
+
+  const [saving, setSaving] = useState(false);
   useEffect(() => {
     autoGrow(textAreaRef);
     setZIndex(cardRef.current);
@@ -33,6 +36,7 @@ const NoteCard = ({ note }) => {
     document.removeEventListener("mouseup", mouseUp)
 
     const newPosition = setNewOffset(cardRef.current);
+    saveData("position", newPosition);
   };
   
   const mouseMove = (e) =>{
@@ -48,9 +52,28 @@ const NoteCard = ({ note }) => {
     setPosition(newPosition);
   };
   
-  
+  const saveData = async (key, value) => {
+    const payload = { [key]: JSON.stringify(value) };
+    try {
+        await db.notes.update(note.$id, payload);
+    } catch (error) {
+        console.error(error);
+    }
+    setSaving(false);
+  };
 
-  
+  const handleKeyUp = async () => {
+    setSaving(true);
+
+    if(keyUpTimer.current){
+      clearTimeout(keyUpTimer.current);
+    }
+
+    keyUpTimer.current = setTimeout(()=>{
+      saveData("body",textAreaRef.current.value);
+    },2000);
+  };
+
   return (
     <div 
       ref={cardRef} 
@@ -59,7 +82,8 @@ const NoteCard = ({ note }) => {
         backgroundColor: colors.colorBody, 
         left:`${position.x}px` , 
         top:`${position.y}px`
-      }}
+      }
+    }
     >
       <div 
         onMouseDown={mouseDown} 
@@ -68,19 +92,29 @@ const NoteCard = ({ note }) => {
           backgroundColor: colors.colorHeader,
         }}
       >
+      {
+        saving && (
+          <div className="cad-saving">
+            <span style={{color:colors.colorText}}>
+              Saving...
+            </span>
+          </div>
+        )
+      }
         <Trash />
       </div>
       <div className="card-body">
         <textarea
           onFocus={() => { 
-            setZIndex(cardRef.current); 
             setSelectedNote(note);
+            setZIndex(cardRef.current); 
           }}
           onInput={() => {
             autoGrow(textAreaRef);
           }}
           ref={textAreaRef}
           style={{ color: colors.colorText }}
+          onKeyUp={handleKeyUp}
           defaultValue={body}
         >
         </textarea>
