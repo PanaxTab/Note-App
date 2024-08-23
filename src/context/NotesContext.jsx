@@ -33,7 +33,7 @@ const NotesProvider = ({ children }) => {
                         height: "100vh",
                     }}
                 >
-                    <Spinner size="100" />
+                    <Spinner size="100"/>
                 </div>
             ) : (
                 children
@@ -41,4 +41,4 @@ const NotesProvider = ({ children }) => {
         </NotesContext.Provider>
     );
 };
-e
+export default NotesProvider;

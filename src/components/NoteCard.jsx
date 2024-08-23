@@ -2,20 +2,24 @@ import Trash from '../icons/Trash.jsx';
 import {setNewOffset, autoGrow, setZIndex} from '../utils.js';
 import { useEffect,useRef,useState } from 'react';
 import { db } from '../appwrite/databases.js';
+import { DeleteButton } from './DeleteButton.jsx';
 
 const NoteCard = ({ note }) => {
   let mouseStartPos = {x:0,y:0};
   //Starting position of where the mouse clicked and then moved
   const cardRef = useRef(null);
+  const textAreaRef = useRef(null);
+  const keyUpTimer = useRef(null);
   //Changes position of a note from a static variable to a static hook
   const [position,setPosition] = useState(JSON.parse(note.position));
+  const [saving, setSaving] = useState(false);
+  
   const colors = JSON.parse(note.colors);
   const body = JSON.parse(note.body);
   
-  const textAreaRef = useRef(null);
-  const keyUpTimer = useRef(null);
 
-  const [saving, setSaving] = useState(false);
+
+  
   useEffect(() => {
     autoGrow(textAreaRef);
     setZIndex(cardRef.current);
@@ -92,6 +96,7 @@ const NoteCard = ({ note }) => {
           backgroundColor: colors.colorHeader,
         }}
       >
+      <DeleteButton noteId={note.$id}/>
       {
         saving && (
           <div className="cad-saving">
@@ -101,12 +106,11 @@ const NoteCard = ({ note }) => {
           </div>
         )
       }
-        <Trash />
       </div>
       <div className="card-body">
         <textarea
           onFocus={() => { 
-            setSelectedNote(note);
+            //setSelectedNote(note);
             setZIndex(cardRef.current); 
           }}
           onInput={() => {
