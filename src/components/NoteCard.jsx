@@ -1,8 +1,10 @@
 import Trash from '../icons/Trash.jsx';
 import {setNewOffset, autoGrow, setZIndex} from '../utils.js';
-import { useEffect,useRef,useState } from 'react';
+import { useEffect,useRef,useState,useContext } from 'react';
 import { db } from '../appwrite/databases.js';
 import { DeleteButton } from './DeleteButton.jsx';
+import { NotesContext } from '../context/NotesContext.jsx';
+
 
 const NoteCard = ({ note }) => {
   let mouseStartPos = {x:0,y:0};
@@ -13,7 +15,7 @@ const NoteCard = ({ note }) => {
   //Changes position of a note from a static variable to a static hook
   const [position,setPosition] = useState(JSON.parse(note.position));
   const [saving, setSaving] = useState(false);
-  
+  const { setSelectedNote } = useContext(NotesContext);
   const colors = JSON.parse(note.colors);
   const body = JSON.parse(note.body);
   
@@ -24,7 +26,8 @@ const NoteCard = ({ note }) => {
     autoGrow(textAreaRef);
     setZIndex(cardRef.current);
   }, []);
-  
+
+
   const mouseDown = (e) =>{
     if (e.target.className ==="card-header"){
       setZIndex(cardRef.current);
@@ -32,6 +35,7 @@ const NoteCard = ({ note }) => {
       mouseStartPos.y = e.clientY;
       document.addEventListener("mousemove",mouseMove);
       document.addEventListener("mouseup", mouseUp)
+      setSelectedNote(note);
     };
   };
   
@@ -110,7 +114,7 @@ const NoteCard = ({ note }) => {
       <div className="card-body">
         <textarea
           onFocus={() => { 
-            //setSelectedNote(note);
+            setSelectedNote(note);
             setZIndex(cardRef.current); 
           }}
           onInput={() => {
