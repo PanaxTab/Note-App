@@ -1,8 +1,9 @@
 import { useContext } from "react";
 import { NotesContext } from "../context/NotesContext";
+import { db } from "../appwrite/databases";
 
 const Color = ({ color }) => {
-  const { selectedNote } = useContext(NotesContext);
+  const { selectedNote,notes,setNotes } = useContext(NotesContext);
   const changeColor = () => {
     console.log("Selected Color: ", selectedNote);
     //console.log("Change color clicked: ", color); 

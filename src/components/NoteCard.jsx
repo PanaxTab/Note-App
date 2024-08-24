@@ -1,4 +1,3 @@
-import Trash from '../icons/Trash.jsx';
 import {setNewOffset, autoGrow, setZIndex} from '../utils.js';
 import { useEffect,useRef,useState,useContext } from 'react';
 import { db } from '../appwrite/databases.js';
